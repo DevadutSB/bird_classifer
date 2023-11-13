@@ -4,7 +4,7 @@ const $ = (a) => document.getElementById(a);
 let url = '';
 
 let loc = window.location;
-url = `${loc.protocol}//${loc.hostname}:${parseInt(loc.port) + 1}`;
+url = `${loc.protocol}//${loc.hostname}:${parseInt(port) + 1}`;
 console.log(url);
 
 
