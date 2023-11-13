@@ -64,7 +64,7 @@ function hexToHSL(hex) {
 
 function getComplementaryColor(hex) {
     const hsl = hexToHSL(hex);
-    const newHue = (hsl.h + 270) % 360; 
-    return hslToHex(newHue,hsl.s,hsl.l - 0.1)
+    const newHue = (hsl.h + 180) % 360; 
+    return hslToHex(newHue,hsl.s,hsl.l - 0.2)
 }
 

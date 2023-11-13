@@ -180,7 +180,7 @@ body {
 }
 
 .inner_slider_bar {
-  width: 60%;
+  width: 0%;
   height: 4px;
   background: radial-gradient(at top left, #c92711 0%, #ffc107 90%);
   margin: 0px 1px;

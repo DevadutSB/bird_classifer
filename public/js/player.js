@@ -1,5 +1,3 @@
-let $ = (a) => document.getElementById(a)
-
 let audio        = $('audio')
 let sound        = $('source')
 let progress     = document.querySelector('div.inner_slider_bar')
