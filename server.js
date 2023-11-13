@@ -7,9 +7,18 @@ const images           = require('./scripts/images.json')
 const { Server }       = require('socket.io');
 const { createServer } = require('node:http');
 
-const PORT = 3000
+let confusion          = {
+    'True_Postive':0,
+    'True_Negtive':0,
+    'False_Postive':0,
+    'True_Negtive':0,
+}
 
-const app = express();
+const sockets          = require('./scripts/sockets.js')
+
+const PORT   = 3000
+
+const app    = express();
 
 const server = createServer(app);
 
@@ -21,8 +30,12 @@ const io = new Server(server,{
     }
 });
 
-io.on('connection', () => {
+io.on('connection', async(socket) => {
     console.log('a user connected ','server')
+
+    socket.emit('data',(data)=>{
+        console.log(data)
+    });
 });
 
 app.use(express.static('public'));
