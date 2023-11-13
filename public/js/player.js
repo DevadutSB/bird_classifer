@@ -1,8 +1,13 @@
-let audio        = document.getElementById('audio')
-let sound        = document.getElementById('source')
+let $ = (a) => document.getElementById(a)
+
+let audio        = $('audio')
+let sound        = $('source')
 let progress     = document.querySelector('div.inner_slider_bar')
-let progress_num = document.getElementById('progress_num')
-let progress_max = document.getElementById('progress_max')
+let progress_num = $('progress_num')
+let progress_max = $('progress_max')
+let bg           = $('back_sp')
+
+let bg_color     = '#000000' , line_width = 1, line_color = '#00ff00' 
 
 files = files.split(',')
  
@@ -19,7 +24,7 @@ async function next(){
      else{
        current_file++ 
      }
-     document.getElementById('filename').innerText = files[current_file]
+     $('filename').innerText = files[current_file]
      sound.src  = bird+files[current_file]
      await play()
 }
@@ -31,7 +36,7 @@ async function prev(){
    else{
      current_file-- 
    }
-   document.getElementById('filename').innerText = files[current_file]
+   $('filename').innerText = files[current_file]
    sound.src  = bird+files[current_file]
    await play()
 }
@@ -44,6 +49,5 @@ async function play(){
    audio.addEventListener('timeupdate', function() {
         progress_num.innerText = `${audio.currentTime.toFixed(2)}`
         progress.style.width = `${audio.currentTime*100/max}%`;
-
     });
 }

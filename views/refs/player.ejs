@@ -1,60 +1,72 @@
 <div class="player rounded-2xl opacity-95 bg-gradient-to-b from-gray-800 to-gray-600 border-2 border-gray-700 w-80">
-    <div class="top flex justify-between p-8">
+  <div class="top flex justify-between p-8">
       <a class="small" href="/">
-        <div class="inner_button bg-radial-gradient bg-radial-dark flex items-center justify-center rounded-full w-14 h-14">
-          <img class="h-4" src="<%= out.images.inner_button_1 %>">
-        </div>
+          <div class="inner_button bg-radial-gradient bg-radial-dark flex items-center justify-center rounded-full w-14 h-14">
+              <img class="h-4" src="<%= out.images.inner_button_1 %>">
+          </div>
       </a>
       <p class="indicator">PLAYING NOW</p>
       <a class="small">
           <div class="inner_button bg-radial-gradient bg-radial-dark flex items-center justify-center rounded-full w-14 h-14">
-            <img class="h-4" src="<%= out.images.inner_button_2 %>">
+              <img class="h-4" src="<%= out.images.inner_button_2 %>">
           </div>
       </a>
-    </div>
+  </div>
 
-    <div class="center">
-      <div class="album rounded-full object-cover">
-        <canvas id="spectrogram"></canvas>
+  <div class="center">
+      <div class="album rounded-full object-cover relative overflow-hidden" id="back_sp">
+          <canvas id="spectrogram" class="absolute top-0 left-0 w-full h-full"></canvas>
       </div>
-      <!-- <img class="album rounded-full object-cover" src="<%= out.bird %>"> -->
-    </div>
+  </div>
 
-    <div class="song_details text-center">
+  <div class="song_details text-center">
       <div class="text-lg"><%= out.dd %></div>
       <div class="text-xs mt-3" id="filename">Future ft. The Weeknd</div>
-    </div>
+  </div>
 
-    <div class="slider m-8">
+  <div class="slider m-8">
       <div class="time flex justify-between items-center text-xs mb-2">
-        <div id="progress_num">0:0</div>
-        <div id="progress_max">2:46</div>
+          <div id="progress_num">0:0</div>
+          <div id="progress_max">2:46</div>
       </div>
       <div class="slider_bar bg-black rounded-lg h-2">
-        <div class="inner_slider_bar bg-radial-gradient bg-radial-orange w-2/3 h-full rounded-lg"></div>
+          <div class="inner_slider_bar bg-radial-gradient bg-radial-orange w-2/3 h-full rounded-lg"></div>
       </div>
-    </div>
-    <audio id="audio">
+  </div>
+  <audio id="audio">
       <source src="" type="audio/mpeg" id="source">
       Your browser does not support the audio element.
-    </audio>
-    <div class="controls flex justify-around">
+  </audio>
+  <div class="controls flex justify-around">
       <button class="big" onclick="prev()">
-        <div class="inner_button_big bg-radial-gradient bg-radial-dark flex items-center justify-center rounded-full w-20 h-20">
-          <img class="h-6 transform -scale-x-100" style="transform: scaleX(-1);" src="<%= out.images.controls %>">
-        </div>
+          <div class="inner_button_big bg-radial-gradient bg-radial-dark flex items-center justify-center rounded-full w-20 h-20">
+              <img class="h-6 transform -scale-x-100" style="transform: scaleX(-1);" src="<%= out.images.controls %>">
+          </div>
       </button>
       <button class="big_play_pause" onclick="play()">
-        <div class="playpause bg-radial-gradient bg-radial-orange flex items-center justify-center rounded-full w-20 h-20">
-          <img class="h-6" src="<%= out.images.controls_play %>">
-        </div>
+          <div class="playpause bg-radial-gradient bg-radial-orange flex items-center justify-center rounded-full w-20 h-20">
+              <img class="h-6" src="<%= out.images.controls_play %>">
+          </div>
       </button>
       <button class="big" onclick="next()">
-        <div class="inner_button_big bg-radial-gradient bg-radial-dark flex items-center justify-center rounded-full w-20 h-20">
-          <img class="h-6" src="<%= out.images.controls %>">
-        </div>
+          <div class="inner_button_big bg-radial-gradient bg-radial-dark flex items-center justify-center rounded-full w-20 h-20">
+              <img class="h-6" src="<%= out.images.controls %>">
+          </div>
       </button>
+  </div>
+  
+</div>
+
+<div class="player rounded-2xl opacity-95 bg-gradient-to-b from-gray-800 to-gray-600 border-2 border-gray-700 w-80">
+  <div class="controls flex justify-around">
+    <div class="p-4">
+      <label for="lineWidth" class="block text-gray-600 mt-4">Line Width <div id="line_width"></div></label>
+      <input type="range" id="lineWidth" name="lineWidth" min="1" max="12" class="w-full bg-gray-300 rounded-md mt-2" />
+    
+      <label for="color" class="block text-gray-600 mt-4">Color</label>
+      <input type="color" id="color" name="color" class="w-full bg-gray-300 rounded-md mt-2" />
     </div>
+  </div>
 </div>
 
 <script>
@@ -62,4 +74,3 @@
   let bird  = '/play/<%= out.current %>/'
 </script>
 
-<script src="/js/player.js"></script>
