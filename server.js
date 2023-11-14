@@ -1,20 +1,28 @@
 const express          = require('express');
 const {join}           = require('path');
-const {readdir}        = require('fs').promises;
+const {
+    readdir,
+    mkdir
+  }                    = require('fs').promises;
 const fs               = require('fs')
 const layouts          = require('express-ejs-layouts')
 const images           = require('./scripts/images.json')
 const { Server }       = require('socket.io');
 const { createServer } = require('node:http');
-
-let confusion          = {
-    'True_Postive':0,
-    'True_Negtive':0,
-    'False_Postive':0,
-    'True_Negtive':0,
+const helpers          = require('./scripts/sockets.js')
+let temp               = {
+    'user_info':undefined
 }
 
-const sockets          = require('./scripts/sockets.js')
+let  FILES = './files/'
+
+let confusion          = {
+    'True_Pos':0, //The model correctly predicted the positive class.
+    'True_Neg':0, //The model correctly predicted the negative class.
+    'False_Pos':0, //The model incorrectly predicted the positive class when the actual class was negative (Type I error).
+    'False_Neg':0, //The model incorrectly predicted the negative class when the actual class was positive (Type II error).
+}
+
 
 const PORT   = 3000
 
@@ -32,10 +40,7 @@ const io = new Server(server,{
 
 io.on('connection', async(socket) => {
     console.log('a user connected ','server')
-
-    socket.emit('data',(data)=>{
-        console.log(data)
-    });
+    await helpers(socket,confusion,FILES,temp)
 });
 
 app.use(express.static('public'));
@@ -52,63 +57,54 @@ app.get('/', (req, res) => {
 });
 
 app.get('/bird', async(req, res) => {
-    const files = await readdir('./files/bird/')
-    out['bird']    ='/pics/bird/bird.png',
-    out['files']   = files
+
+    console.log( req.ip)
+
+    out['bird']    ='/pics/bird/bird.png'
+   
     out['images']  = images
     out['dd']      = 'Bird'
     out['current'] = 'bird'
+
+    
+    const files = await readdir(FILES+out['current']+'/')
+    out['files']   = files
     res.render('refs/player',{out});
 });
 
 app.get('/nobird', async(req, res) => {
-    const files    = await readdir('./files/nobird/')
+
     out['bird']    ='/pics/bird/nobird.jpg',
-    out['files']   = files
     out['images']  = images
     out['dd']      = 'No Bird'
     out['current'] = 'nobird'
+
+    const files = await readdir(FILES+out['current']+'/')
+    out['files']   = files
+
     res.render('refs/player',{out});
 });
 
-
-app.get('/play/bird/:fileName', (req, res) => {
-    const fileName = req.params.fileName;
-    const filePath = join('./files/bird/', fileName);
-
-    fs.exists(filePath, (exists) => {
-        if (exists) {
-            const stat = fs.statSync(filePath);
-            res.writeHead(200, {
-                'Content-Type': 'audio/wav',
-                'Content-Length': stat.size
-            });
-            const readStream = fs.createReadStream(filePath);
-            readStream.pipe(res);
-        } else {
-            res.status(404).send('File not found!');
-        }
-    });
-});
-
-app.get('/play/nobird/:fileName', (req, res) => {
-    const fileName = req.params.fileName;
-    const filePath = join('./files/nobird/', fileName);
-
-    fs.exists(filePath, (exists) => {
-        if (exists) {
-            const stat = fs.statSync(filePath);
-            res.writeHead(200, {
-                'Content-Type': 'audio/wav',
-                'Content-Length': stat.size
-            });
-            const readStream = fs.createReadStream(filePath);
-            readStream.pipe(res);
-        } else {
-            res.status(404).send('File not found!');
-        }
-    });
-});
+['bird','nobird'].forEach(n=>{
+    app.get(`/play/${n}/:fileName`, (req, res) => {
+        const fileName = req.params.fileName;
+        const filePath = join(`./files/${n}/`, fileName);
+    
+        fs.exists(filePath, (exists) => {
+            if (exists) {
+                const stat = fs.statSync(filePath);
+                res.writeHead(200, {
+                    'Content-Type': 'audio/wav',
+                    'Content-Length': stat.size
+                });
+                const readStream = fs.createReadStream(filePath);
+                readStream.pipe(res);
+            } else {
+                res.status(404).send('File not found!');
+            }
+        });
+    });    
+})
 
 
 app.listen(PORT, () => {
