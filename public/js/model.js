@@ -1,26 +1,28 @@
+let c=0;
+
 function calculateMetrics(confusionMatrix) {
-    const True_Pos = confusionMatrix.True_Pos || 0;
-    const True_Neg = confusionMatrix.True_Neg || 0;
-    const False_Pos = confusionMatrix.False_Pos || 0;
-    const False_Neg = confusionMatrix.False_Neg || 0;
+    c++
 
-    const totalTrue = True_Pos + True_Neg + False_Pos + False_Neg;
+    let curr = bird.split("/")[2]
 
-    let precision = True_Pos / (True_Pos + False_Pos);
-    let recall = True_Pos / (True_Pos + False_Neg);
+    let corr_pred  = 0
+    let wrong_pred = 0
 
-    precision = isNaN(precision) ? 0 : precision
-    recall    = isNaN(recall) ? 0    : recall
-
-    const f1Score = (2 * (precision * recall)) / (precision + recall === 0 ? 1 : precision + recall);
+    if(curr=="bird"){
+        corr_pred  = confusionMatrix.True_Pos || 0;
+        wrong_pred = confusionMatrix.False_Pos || 0;
+    }
+    else{
+        corr_pred  = confusionMatrix.True_Neg || 0;
+        wrong_pred = confusionMatrix.False_Neg || 0;
+    }
 
     return {
-        Precision: precision,
-        Recall: recall,
-        "F1-Score": f1Score,
-        "Correctly Predicted": True_Pos + True_Neg,
-        "Support": totalTrue
+        "Accuracy ": `${(corr_pred*100/c).toFixed(2)}% (${corr_pred}/${c})`,
+        "Error  ": `${(wrong_pred*100/c).toFixed(2)}% (${wrong_pred}/${c})`,
     };
+
+    
 }
 
 

@@ -87,9 +87,10 @@ app.get('/nobird', async(req, res) => {
 
 ['bird','nobird'].forEach(n=>{
     app.get(`/play/${n}/:fileName`, (req, res) => {
+
         const fileName = req.params.fileName;
         const filePath = join(`./files/${n}/`, fileName);
-    
+
         fs.exists(filePath, (exists) => {
             if (exists) {
                 const stat = fs.statSync(filePath);

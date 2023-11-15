@@ -21,6 +21,7 @@ function no(){
         "file":files[current_file],
         'state':false  
     }
+    files.splice(current_file, 1);
     socket.emit('data',data);
 }
 
@@ -29,6 +30,7 @@ function undo(){
         "bird":bb,
         "file":files[current_file-1] ? files[current_file-1] : files[files.length-1],  
     }
+
     socket.emit('undo',data);
 }
 
@@ -61,7 +63,7 @@ script.onload = () => {
                 ${Object.entries(metrics).map(([metric, value]) => `
                     <tr class="hover:bg-gray-700">
                         <td class="px-4 py-2 border-b border-gray-600">${metric}</td>
-                        <td class="px-4 py-2 border-b border-gray-600">${value.toFixed(4)}</td>
+                        <td class="px-4 py-2 border-b border-gray-600">${value}</td>
                     </tr>`).join('')}
             </tbody>
         </table>
@@ -86,5 +88,16 @@ script.onload = () => {
     `);
 
       $('table').innerHTML = table1+table2
+    })
+    err_handle()
+
+    socket.on('move',(data)=>{
+        console.log(data)
+        if(current_file>files.length-1){
+            current_file = 0
+        }
+        else{
+        current_file++ 
+        }
     })
 };

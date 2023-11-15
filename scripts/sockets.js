@@ -4,61 +4,60 @@ const {
     unlink 
 }                    = require('fs').promises;
 
-async function helpers(socket,confusion,FILES,temp){
+const neg = (bird) => bird == 'bird' ? 'nobird' : 'bird'
 
-    const neg = (bird) => bird == 'bird' ? 'nobird' : 'bird'
+async function try_move(con,log,src,inp,file,err){
+    try{
+        await Promise.all([
+            writeFile(`${src}log.txt`,`\nmoved ${src}${inp}/${file} to ${src}${neg(inp)}/`,{ flag: 'a+' }),
+            writeFile(`${src}log.txt`,`\nmoved ${src}${inp}/${file} to ${src}${neg(inp)}/`,{ flag: 'a+' }),,
+            rename(`\n${JSON.stringify(con)}`)
+        ])
+        console.log(`\n${log} ${src}${inp}/${file} to ${src}${neg(inp)}/`)
+    }
+    catch(e){
+        console.log(e)
+        err()
+    }
+}
+
+async function helpers(socket,confusion,FILES,temp){
 
     await socket.on('data',async(data)=>{
         if(data['bird']=='bird'){
-
-            socket.emit('confusion',confusion)
 
             if(data['state']){
                 confusion['True_Pos']++
             }
             else{
                 confusion['False_Pos']++
-                await rename(
-                    FILES+'bird/'+data['file'],
-                    FILES+'nobird/'+data['file'],
-                )
-                console.log(
-                    FILES+'bird/'+data['file'],
-                    FILES+'nobird/'+data['file'],
-                )
-                
-                await writeFile(FILES+'log.txt',`\nmoved ${FILES}bird/${data['file']} to ${FILES}nobird/`,{ flag: 'a+' })
-                console.log(`moved ${FILES}bird/${data['file']} to ${FILES}/nobird/`)
+                await try_move(confusion,"moved",FILES,'bird',data['file'],()=>{
+                    socket.emit('file move err',`${FILES}/bird/${data['file']}`)
+                })
             }
-            
+            socket.emit('confusion',confusion)
         }
         else{
 
-            socket.emit('confusion',confusion)
-            
             if(data['state']){
                 confusion['True_Neg']++
             }
             else{
                 confusion['False_Neg']++
-                await rename(
-                    FILES+'nobird/'+data['file'],
-                    FILES+'bird/'+data['file'],
-                )
-                await writeFile(FILES+'log.txt',`\nmoved ${FILES}nobird/${data['file']} to ${FILES}bird/`,{ flag: 'a+' })
-                console.log(`moved ${FILES}nobird/${data['file']} to ${FILES}bird/`)
+                await try_move(confusion,"moved",FILES,'nobird',data['file'],()=>{
+                    socket.emit('file move err',`${FILES}/nobird/${data['file']}`)
+                })
             }
+            socket.emit('confusion',confusion)
         }
 
     });
 
     await socket.on('undo',async(data)=>{
-        await rename(
-            FILES+neg(data['bird'])+'/'+data['file'],
-            FILES+data['bird']+'/'+data['file'],
-        )
-        await writeFile(FILES+'log.txt',`\nundo moved ${FILES}/${neg(data['bird'])}/${data['file']} to ${FILES}/${data['bird']}/`,{ flag: 'a+' })
-        console.log(`undo moved ${FILES}/${neg(data['bird'])}/${data['file']} to ${FILES}/${data['bird']}/`)
+        await try_move(confusion,"undo move",FILES,neg(data['bird']),data['file'],()=>{
+            socket.emit('file move err',`${FILES}/${neg(data['bird'])}/${data['file']}`)
+        })
+        
     });
 
     socket.on('log',async(data)=>{
