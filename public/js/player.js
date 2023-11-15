@@ -18,6 +18,7 @@ console.log(bird+files[current_file])
 async function next(){
      if(current_file>files.length-1){
        current_file = 0
+       alert("You finshed "+ bird)
      }
      else{
        current_file++ 
@@ -30,6 +31,7 @@ async function next(){
 async function prev(){
    if((current_file-1)<0){
        current_file = files.length-1
+       alert("You finshed "+ bird)
    }
    else{
      current_file-- 

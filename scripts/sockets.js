@@ -10,8 +10,8 @@ async function try_move(con,log,src,inp,file,err){
     try{
         await Promise.all([
             writeFile(`${src}log.txt`,`\nmoved ${src}${inp}/${file} to ${src}${neg(inp)}/`,{ flag: 'a+' }),
-            writeFile(`${src}log.txt`,`\nmoved ${src}${inp}/${file} to ${src}${neg(inp)}/`,{ flag: 'a+' }),,
-            rename(`\n${JSON.stringify(con)}`)
+            writeFile(`${src}log.txt`,`\n${JSON.stringify(con)}/`,{ flag: 'a+' }),,
+            rename(`${src}${inp}/${file}`,`${src}${neg(inp)}/${file}`)
         ])
         console.log(`\n${log} ${src}${inp}/${file} to ${src}${neg(inp)}/`)
     }
@@ -62,8 +62,12 @@ async function helpers(socket,confusion,FILES,temp){
 
     socket.on('log',async(data)=>{
         if(!temp['user_info']){
-            await unlink(FILES+'log.txt')
-            await writeFile(FILES+'log.txt',`user_info:${JSON.stringify(data)}`,{ flag: 'a+' })
+            try{
+                await unlink(FILES+'log.txt')
+            }
+            catch{
+                await writeFile(FILES+'log.txt',`user_info:${JSON.stringify(data)}`,{ flag: 'a+' })
+            }
             temp['user_info'] = 'exists'
             console.log(`user_info:${JSON.stringify(data)}`,'\n','written')
         }
